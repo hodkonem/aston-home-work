@@ -37,7 +37,12 @@ class MyDynamicArray<E> implements ResizableList<E> {
 
     @Override
     public void update(int index, E e) {
+        values[index] = e;
+    }
 
+    @Override
+    public boolean isEmpty() {
+        return values.length == 0;
     }
 
     @Override
@@ -47,5 +52,20 @@ class MyDynamicArray<E> implements ResizableList<E> {
 
     public E get(int index) {
         return values[index];
+    }
+
+    public boolean addAll(ResizableList<E> collection) {
+        if (collection == null || collection.isEmpty()) {
+
+        }
+        try {
+            for (E element : collection) {
+                add(element);
+            }
+            return true;
+        } catch (ClassCastException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 }

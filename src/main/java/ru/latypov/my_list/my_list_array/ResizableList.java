@@ -6,4 +6,6 @@ public interface ResizableList<E> extends Iterable<E> {
     int size();
 
     void update(int index, E e);
+
+    boolean isEmpty();
 }

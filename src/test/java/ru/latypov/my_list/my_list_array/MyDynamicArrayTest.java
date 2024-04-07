@@ -2,8 +2,7 @@ package ru.latypov.my_list.my_list_array;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MyDynamicArrayTest {
 
@@ -50,6 +49,28 @@ class MyDynamicArrayTest {
         assertEquals(2, myDynamicArray.size());
     }
 
+    @Test
+    void testAddAll() {
+        MyDynamicArray<Integer> array = new MyDynamicArray<>();
+        MyDynamicArray<Integer> collection = new MyDynamicArray<>();
+        collection.add(1);
+        collection.add(2);
+
+        assertTrue(array.addAll(collection));
+        assertEquals(2, array.size());
+
+        // Тест на случай, если происходит ClassCastException
+        MyDynamicArray<Integer> intCollection = new MyDynamicArray<>();
+        intCollection.add(3);
+        intCollection.add(4);
+
+    }
+
+    @Test
+    void testEmpty(){
+       MyDynamicArray<Integer> myDynamicArray = new MyDynamicArray<>();
+       assertTrue(myDynamicArray.isEmpty());
+    }
 
 
 }
