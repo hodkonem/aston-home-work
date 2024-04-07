@@ -2,15 +2,15 @@ package ru.latypov.my_list.my_list_array;
 
 import java.util.Iterator;
 
-class MyDynamicArray<E> implements ResizableList<E> {
+class DynamicArray<E> implements ResizableList<E> {
 
-    private E[] values;
+    protected E[] values;
 
-    public MyDynamicArray() {
+    public DynamicArray() {
         values = (E[]) new Object[0];
     }
 
-    public MyDynamicArray(ResizableList<? extends E> collection) {
+    public DynamicArray(ResizableList<? extends E> collection) {
         for (E element : collection) {
             add(element);
         }
@@ -19,15 +19,17 @@ class MyDynamicArray<E> implements ResizableList<E> {
     @Override
     public boolean add(E e) {
         try {
-            E[] temp = values;
-            values = (E[]) new Object[temp.length + 1];
-            System.arraycopy(temp, 0, values, 0, temp.length);
+            if (values.length == values.length) {
+                E[] temp = values;
+                values = (E[]) new Object[temp.length + 1];
+                System.arraycopy(temp, 0, values, 0, temp.length);
+            }
             values[values.length - 1] = e;
             return true;
         } catch (ClassCastException ex) {
             ex.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -47,25 +49,26 @@ class MyDynamicArray<E> implements ResizableList<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new SimpleArrayIterator<>(values);
     }
 
     public E get(int index) {
         return values[index];
     }
 
-    public boolean addAll(ResizableList<E> collection) {
+    public ResizableList<E> addAll(ResizableList<E> collection) {
         if (collection == null || collection.isEmpty()) {
-
+            return this;
         }
         try {
             for (E element : collection) {
                 add(element);
             }
-            return true;
+            return this;
         } catch (ClassCastException ex) {
             ex.printStackTrace();
+
         }
-        return false;
+        return this;
     }
 }
