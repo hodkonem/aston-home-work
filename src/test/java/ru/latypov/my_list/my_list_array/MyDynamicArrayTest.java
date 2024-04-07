@@ -38,6 +38,18 @@ class MyDynamicArrayTest {
         }
     }
 
+    @Test
+    void testSize() {
+        MyDynamicArray<Integer> myDynamicArray = new MyDynamicArray<>();
+        assertEquals(0, myDynamicArray.size());
+
+        myDynamicArray.add(4);
+        assertEquals(1, myDynamicArray.size());
+
+        myDynamicArray.add(10);
+        assertEquals(2, myDynamicArray.size());
+    }
+
 
 
 }
