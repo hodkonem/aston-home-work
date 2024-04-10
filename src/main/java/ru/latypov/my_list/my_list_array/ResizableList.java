@@ -7,5 +7,7 @@ public interface ResizableList<E> extends Iterable<E> {
 
     void update(int index, E e);
 
+    boolean remove(int index);
+
     boolean isEmpty();
 }
