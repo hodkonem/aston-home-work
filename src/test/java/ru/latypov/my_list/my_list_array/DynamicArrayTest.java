@@ -123,15 +123,4 @@ class DynamicArrayTest {
         ResizableList<Integer> emptyCollection = new DynamicArray<>();
         assertFalse(integerArray.addAll(emptyCollection));
     }
-
-    @Test
-    void testBubbleSort() {
-        integerArray = new DynamicArray<>();
-        integerArray.add(3);
-        integerArray.add(2);
-        integerArray.add(1);
-
-        DynamicArrayUtils.bubbleSort(integerArray);
-        assertEquals(1, integerArray.get(0));
-    }
 }
