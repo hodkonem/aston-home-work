@@ -1,7 +1,7 @@
 package ru.latypov.my_list.my_list_array;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 
 class DynamicArray<E> implements ResizableList<E> {
@@ -10,7 +10,7 @@ class DynamicArray<E> implements ResizableList<E> {
     private int elementCount = 0;
 
     public DynamicArray() {
-        values = (E[]) new Object[10];
+        values = (E[]) new Object[0];
     }
 
     public DynamicArray(ResizableList<E> collection) {
@@ -22,29 +22,28 @@ class DynamicArray<E> implements ResizableList<E> {
         int index = 0;
         for (E element : otherCollection) {
             this.values[index++] = element;
-            checkValuesLength();
+        }
+    }
+
+    private void checkValuesLength() {
+        if (elementCount == values.length) {
+            int newCapacity = values.length * 3 / 2 + 1;  // Стандартное увеличение размера в коллекциях Java.
+            E[] newArray = (E[]) new Object[newCapacity];
+            System.arraycopy(values, 0, newArray, 0, values.length);
+            values = newArray;
         }
     }
 
     @Override
     public boolean add(E e) {
-        try {
-            checkValuesLength();
-            elementCount++;
-            values[values.length - 1] = e;
-            return true;
-        } catch (ClassCastException ex) {
-            ex.printStackTrace();
-            return false;
+        checkValuesLength();
+        if (elementCount == values.length) {
+            int newCapacity = Math.max(values.length * 2, elementCount + 1);
+            E[] newArray = Arrays.copyOf(values, newCapacity);
+            values = newArray;
         }
-    }
-
-    private void checkValuesLength() {
-        if (values.length == elementCount) {
-            E[] temp = values;
-            values = (E[]) new Object[temp.length + temp.length / 2];
-            System.arraycopy(temp, 0, values, 0, temp.length);
-        }
+        values[elementCount++] = e;
+        return true;
     }
 
     @Override
@@ -59,7 +58,15 @@ class DynamicArray<E> implements ResizableList<E> {
 
     @Override
     public boolean remove(int index) {
-        return false;
+        if (index < 0 || index >= elementCount) {
+            return false;
+        }
+        int moveCount = elementCount - index - 1;
+        if (moveCount > 0) {
+            System.arraycopy(values, index + 1, values, index, moveCount);
+        }
+        values[--elementCount] = null;
+        return true;
     }
 
     @Override
@@ -76,36 +83,49 @@ class DynamicArray<E> implements ResizableList<E> {
         return values[index];
     }
 
+    public int getCapacity() {
+        return values.length;
+    }
+
     public boolean addAll(ResizableList<E> collection) {
         if (collection == null || collection.isEmpty()) {
             return false;
         }
-        try {
-            for (E element : collection) {
-                add(element);
-            }
-            return true;
-        } catch (ClassCastException ex) {
-            ex.printStackTrace();
-            return false;
+        int newSize = this.size() + collection.size();
+        if (newSize > values.length) {
+            int newCapacity = Math.max(values.length * 2, newSize); // Выбираем большую из двух величин
+            E[] newArray = (E[]) new Object[newCapacity];
+            System.arraycopy(values, 0, newArray, 0, elementCount);
+            values = newArray;
         }
 
-
+        for (E element : collection) {
+            this.add(element);
+        }
+        return true;
     }
 
-    public <T extends Comparable<? super T>> void bubbleSort(Comparator<? super E> c) {
-        boolean sorted;
-        for (int i = 0; i < size() - 1; i++) {
-            sorted = true;
-            for (int j = 0; j < size() - i - 1; j++) {
-                if (c.compare(values[j], values[j + 1]) > 0) {
-                    E temp = values[j];
-                    values[j] = values[j + 1];
-                    values[j + 1] = temp;
-                    sorted = false;
+    public void set(int index, E element) {
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size());
+        }
+        values[index] = element;
+    }
+
+    public static <T extends Comparable<? super T>> void bubbleSort(DynamicArray<T> list) {
+        boolean swapped;
+        boolean sorted = false;
+        do {
+            swapped = false;
+            for (int i = 1; i < list.size(); i++) {
+                if (list.get(i - 1).compareTo(list.get(i)) > 0) {
+                    T temp = list.get(i - 1);
+                    list.set(i - 1, list.get(i));
+                    list.set(i, temp);
+                    swapped = true;
                 }
             }
-            if (sorted) break;
-        }
+            sorted = !swapped;
+        } while (!sorted);
     }
 }
